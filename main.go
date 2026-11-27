@@ -17,15 +17,13 @@ type server struct {
 func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" && r.URL.Path == "/users" {
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-type", "application/json")
-
 		userList := []User{}
 
 		for _, user := range users {
 			userList = append(userList, user)
 		}
-		json.NewEncoder(w).Encode(userList)
+
+		writeJSON(w, http.StatusOK, userList)
 
 		return
 	}
@@ -54,10 +52,7 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		users[newId] = newUser
 
-		w.WriteHeader(http.StatusCreated)
-		w.Header().Set("Content-type", "application/json")
-
-		json.NewEncoder(w).Encode(newUser)
+		writeJSON(w, http.StatusCreated, newUser)
 
 		return
 	}
@@ -75,9 +70,7 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			w.Header().Set("Content-type", "application/json")
-
-			json.NewEncoder(w).Encode(user)
+			writeJSON(w, http.StatusOK, user)
 
 			return
 		}
